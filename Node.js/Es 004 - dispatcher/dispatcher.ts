@@ -2,6 +2,7 @@ import * as _http from "http";
 import * as _url from "url";
 import * as _fs from "fs";
 import * as _mime from "mime";
+import * as querystring from "query-string";
 import { inherits } from "util";
 
 let HEADERS = require("./headers.json");
@@ -13,7 +14,7 @@ class Dispatcher {
     // ogni listener è costituito da un json del tipo { "risorsa": "callback" }
     // i listener sono suddivisi in base al metodo di chiamata
     listeners: any = {
-        "Get": {},
+        "GET": {},
         "POST": {},
         "DELETE": {},
         "PUT": {},
@@ -40,16 +41,56 @@ class Dispatcher {
         }
     }
 
-    dispatch(req, res) {
+    dispatch(req, res){
+        let metodo = req.method.toUpperCase();
+        if (metodo == "GET") {
+            this.innerDispatch(req, res);
+        }
+        else{
+            let parametriBody : string = "";
+            req.on("data", function (data) {
+                parametriBody += data;
+            })
+
+            // metto i parametri convertiti in json
+            let parametriJson = {};
+            // mi salvo il puntatore alla classe 
+            let _this = this;
+            req.on("end", function () {
+                // dobbiamo controllare se i parametri sono json o URLencoded
+                try {
+                    // se i parametri sono in formato json la conversione andrà a buon fine
+                    parametriJson = JSON.parse(parametriBody);
+                } catch (error) {
+                    // qui li converto in json in caso siano in URL-ENCODED
+                    parametriJson = querystring.parse(parametriBody);
+                }
+                finally{
+                    // salviamo i parametri in un nuovo campo
+                    req["BODY"] = parametriJson;
+                    _this.innerDispatch(req, res);
+                }
+            })
+        }
+    }
+
+    innerDispatch(req, res) {
         // deve vedere il metodo la risorla ed il parametro
         // lettura di metodo, risorsa e parametri
         let metodo = req.method;
         let url = _url.parse(req.url, true);
         let risorsa = url.pathname;
         let parametri = url.query;
-
+    
+        // creo su request una chiave così va a prendere direttamente i parametri
+        req["GET"] = parametri;
+    
         console.log(`${this.prompt} ${metodo} : ${risorsa} ${JSON.stringify(parametri)}`);
-
+        // lo facciamo solo se esiste
+        if (req["BODY"]) {
+            console.log(`   ${JSON.stringify(req["BODY"])}`)
+        }
+    
         // guardiamo se è un servizio o una risorsa
         if (risorsa.startsWith("/api/")) {
             if (risorsa in this.listeners[metodo]) {

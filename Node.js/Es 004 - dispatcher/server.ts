@@ -5,6 +5,7 @@ let dispatcher = require("./dispatcher.ts");
 let port:number = 1337;
 
 
+// tutte le volte che arriva una richgiesta dal client parte questa funzione
 let server = _http.createServer(function (req, res) {
     dispatcher.dispatch(req, res);
 });
@@ -14,6 +15,14 @@ console.log("Server in ascolto sulla porta "+ port);
 // registrazione dei servizi
 dispatcher.addListener("POST", "/api/servizio1", function (req, res) {
     res.writeHead(200, HEADERS.json);
-    res.write(JSON.stringify({"ris": "ok"}));
+    let nome = req["BODY"].nome;
+    res.write(JSON.stringify({"ris": nome, "id": req["GET"].id}));
+    res.end();
+})
+
+dispatcher.addListener("GET", "/api/servizio2", function (req, res) {
+    res.writeHead(200, HEADERS.json);
+    let nome = req["GET"].nome; 
+    res.write(JSON.stringify({"ris":nome}));
     res.end();
 })
