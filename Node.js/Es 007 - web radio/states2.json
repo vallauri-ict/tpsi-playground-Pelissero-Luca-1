@@ -7,96 +7,96 @@
   {
     "name": "Valle d'Aosta",
     "value": "Valle d'Aosta",
-    "stationcount": "3"
+    "stationcount": "0"
   },
   {
     "name": "Lombardia",
     "value": "Lombardia",
-    "stationcount": "49"
+    "stationcount": "46"
   },
   {
     "name": "Trentino-Alto Adige/Südtirol",
     "value": "Trentino-Alto Adige/Südtirol",
-    "stationcount": "53"
+    "stationcount": "4"
   },
   {
     "name": "Veneto",
     "value": "Veneto",
-    "stationcount": "59"
+    "stationcount": "6"
   },
   {
     "name": "Friuli-Venezia Giulia",
     "value": "Friuli-Venezia Giulia",
-    "stationcount": "60"
+    "stationcount": "1"
   },
   {
     "name": "Liguria",
     "value": "Liguria",
-    "stationcount": "60"
+    "stationcount": "0"
   },
   {
     "name": "Emilia-Romagna",
     "value": "Emilia-Romagna",
-    "stationcount": "61"
+    "stationcount": "1"
   },
   {
     "name": "Toscana",
     "value": "Toscana",
-    "stationcount": "66"
+    "stationcount": "5"
   },
   {
     "name": "Marche",
     "value": "Marche",
-    "stationcount": "67"
+    "stationcount": "1"
   },
   {
     "name": "Umbria",
     "value": "Umbria",
-    "stationcount": "67"
+    "stationcount": "0"
   },
   {
     "name": "Abruzzo",
     "value": "Abruzzo",
-    "stationcount": "68"
+    "stationcount": "1"
   },
   {
     "name": "Molise",
     "value": "Molise",
-    "stationcount": "68"
+    "stationcount": "0"
   },
   {
     "name": "Lazio",
     "value": "Lazio",
-    "stationcount": "100"
+    "stationcount": "32"
   },
   {
     "name": "Campania",
     "value": "Campania",
-    "stationcount": "103"
+    "stationcount": "3"
   },
   {
     "name": "Puglia",
     "value": "Puglia",
-    "stationcount": "104"
+    "stationcount": "1"
   },
   {
     "name": "Basilicata",
     "value": "Basilicata",
-    "stationcount": "104"
+    "stationcount": "0"
   },
   {
     "name": "Calabria",
     "value": "Calabria",
-    "stationcount": "106"
+    "stationcount": "2"
   },
   {
     "name": "Sicilia",
     "value": "Sicilia",
-    "stationcount": "108"
+    "stationcount": "2"
   },
   {
     "name": "Sardegna",
     "value": "Sardegna",
-    "stationcount": "108"
+    "stationcount": "0"
   }
 ]
