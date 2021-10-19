@@ -5,10 +5,10 @@ import * as _mime from "mime";
 import * as querystring from "query-string";
 import { inherits } from "util";
 
-let HEADERS = require("./headers.json");
+import HEADERS from "./headers.json";
 let paginaErrore: string;
 
-class Dispatcher {
+export class Dispatcher {
     prompt: string = ">>>"
 
     // ogni listener è costituito da un json del tipo { "risorsa": "callback" }
@@ -145,4 +145,4 @@ function init() {
 }
 
 // esporto l'istanze della classe in forma anonima
-module.exports = new Dispatcher();
+// module.exports = new Dispatcher();
