@@ -6,20 +6,41 @@ const mongoClient = _mongodb.MongoClient;
 const CONNECTIONSTRING = "mongodb://127.0.0.1:27017";
 const DB_NAME = "5B";
 
-// Query 1
+// Query 1 a
 mongoClient.connect(CONNECTIONSTRING, function (err, client) {
    if (!err) {
       let db = client.db(DB_NAME);
       let collection = db.collection("unicorns");
       collection.find({ "weight": { "$lte": 800, "$gte": 700 } }).toArray(function (err, data) {
          if (!err) {
-            console.log("Query 1:", data);
+            console.log("Query 1 a:", data);
          }
          else {
             console.log("Errore esecuzione qury: " + err.message);
          }
          client.close();
       });
+   }
+   else {
+      console.log("Errore nella connessione al database: " + err.message);
+   }
+});
+
+// Query 1b (promise)
+mongoClient.connect(CONNECTIONSTRING, function (err, client) {
+   if (!err) {
+      let db = client.db(DB_NAME);
+      let collection = db.collection("unicorns");
+      let req = collection.find({ "weight": { "$lte": 800, "$gte": 700 } }).toArray();
+      req.then(function (data) {
+         console.log("Query 1b promise:", data);
+      })
+      req.catch(function (err) {
+         console.log("Errore esecuzione query: " + err.message)
+      })
+      req.finally(function () {
+         client.close();
+      })
    }
    else {
       console.log("Errore nella connessione al database: " + err.message);
@@ -473,7 +494,7 @@ mongoClient.connect(CONNECTIONSTRING, function (err, client) {
    if (!err) {
       let db = client.db(DB_NAME)
       let collection = db.collection("unicorns")
-      collection.find({ "gender": "f" }, {"projection": {"name": 1, "vampires": 1, "_id": 0}}).limit(1).sort({ "vampires": -1 }).toArray((err, data) => {
+      collection.find({ "gender": "f" }, { "projection": { "name": 1, "vampires": 1, "_id": 0 } }).limit(1).sort({ "vampires": -1 }).toArray((err, data) => {
          if (!err) {
             console.log("Query 21 b:", data)
          } else {
@@ -493,7 +514,7 @@ mongoClient.connect(CONNECTIONSTRING, function (err, client) {
       let db = client.db(DB_NAME)
       let collection = db.collection("unicorns")
       // cancella tutti i campi del record trovato e scrive quello che inseriamo noi 
-      collection.replaceOne({ "name": "Pluto" }, {"name": "Pluto", "residenza": "Fossano", "loves": ["apple"]}, (err, data) => {
+      collection.replaceOne({ "name": "Pluto" }, { "name": "Pluto", "residenza": "Fossano", "loves": ["apple"] }, (err, data) => {
          if (!err) {
             console.log("Query 22:", data)
          } else {
