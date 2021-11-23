@@ -27,19 +27,17 @@ dispatcher.addListener("POST", "/api/servizio1", function (req, res) {
         if (!err) {
             let db = client.db(DB_NAME);
             let collection = db.collection("unicorns");
-            let req = collection.find({
-                "$and": [
-                    { "$gte": { "dob": dataStart } },
-                    { "$lte": { "dob": dataEnd } }
-                ]
-            }).project({ "nome": 1, "classe": 1 }).toArray();
+            let req = collection.find(
+                {
+                    "$and": [{ "dob": { "$gte": dataStart, "$lte": dataEnd } }]
+                }).project({ "nome": 1, "classe": 1 }).toArray();
             req.then(function (data) {
                 res.writeHead(200, HEADERS.json);
                 res.write(JSON.stringify(data));
                 res.end();
             })
             req.catch(function (err) {
-                res.writeHead(200, HEADERS.json);
+                res.writeHead(500, HEADERS.text);
                 res.write("Errore esecuzione query: " + err.message);
                 res.end();
             })

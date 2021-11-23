@@ -5,8 +5,8 @@ $(document).ready(function () {
         let dataEnd = $("#dataEnd").val();
         let request = inviaRichiesta("post", "/api/servizio1", { "dataStart": dataStart, "dataEnd": dataEnd });
         request.fail(errore);
-        request.done(function(data) {
-            alert(JSON.stringify(data))
+        request.done(function (data) {
+            console.log(JSON.stringify(data));
         });
     });
 });
