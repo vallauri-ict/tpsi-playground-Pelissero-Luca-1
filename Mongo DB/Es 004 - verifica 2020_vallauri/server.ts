@@ -26,11 +26,11 @@ dispatcher.addListener("POST", "/api/servizio1", function (req, res) {
     mongoClient.connect(CONNECTIONSTRING, function (err, client) {
         if (!err) {
             let db = client.db(DB_NAME);
-            let collection = db.collection("unicorns");
-            let req = collection.find(
-                {
-                    "$and": [{ "dob": { "$gte": dataStart, "$lte": dataEnd } }]
-                }).project({ "nome": 1, "classe": 1 }).toArray();
+            let collection = db.collection("vallauri");
+            let req = collection.aggregate([
+                {"$match": {"dob": {"$gte": dataStart, "$lte": dataEnd}}},
+                {"$project": {"_id": 0, "nome": 1, "classe": 1}}
+            ]).toArray();
             req.then(function (data) {
                 res.writeHead(200, HEADERS.json);
                 res.write(JSON.stringify(data));
