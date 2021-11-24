@@ -349,6 +349,8 @@ mongoClient.connect(CONNECTIONSTRING, function (err, client) {
 
 // Query 15
 mongoClient.connect(CONNECTIONSTRING, function (err, client) {
+   let date = new Date();
+
    if (!err) {
       let db = client.db(DB_NAME)
       let collection = db.collection("unicorns")
