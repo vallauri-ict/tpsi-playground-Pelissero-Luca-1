@@ -2,5 +2,5 @@
 
 _Stud. Pelissero Luca_
 
-### Esercizio 04 - Vallauri
-#### Verifica 2020 su Mongo DB in preparazione alla verifica 2021.
+### Esercizio 000 - Verifica 2021
+#### Verifica 2021 su Mongo DB. Riproduzione della verifica di node.js con varie modifiche per adattarla al linguaggio di mongodb.
