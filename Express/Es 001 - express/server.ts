@@ -58,6 +58,9 @@ app.use("/", (req, res, next) => {
     next();
 })
 
+// *********************************************************************
+//              elenco delle routes di risposta al client
+// *********************************************************************
 // 5.listener di risposta al client
 // route della creazione della connessione
 app.use("/", (req, res, next) => {
@@ -139,27 +142,18 @@ app.get("/api/risorsa3/:gender/:hair", (req, res, next) => {
 })
 
 // *********************************************************************
-//              elenco delle routes di risposta al client
-// *********************************************************************
-app.get("/api/risorsa1", (req, res, next) => {
-    let nome = req.query.nome;
-    res.send({ nome: nome });
-})
-
-app.post("/api/risorsa1", (req, res, next) => {
-    let nome = req.body.nome;
-    res.send({ nome: nome });
-})
-
-// *********************************************************************
 // default route (risorsa non trovata) e routes di gestione degli errori
 // *********************************************************************
-app.use("/", (req, res, next) => {
-    res.status(404)
+app.use("/", function (req, res, next) {
+    res.status(404);
     if (req.originalUrl.startsWith("/api/")) {
-        res.send("Risorsa non trovata");
-    }
-    else {
+        res.send("Servizio non trovato ");
+    } else {
         res.send(paginaErrore);
     }
+});
+
+// route di gestione errori
+app.use("/", (err, req, res, next) => {
+    console.log("Errore codice server", err.message);
 })
