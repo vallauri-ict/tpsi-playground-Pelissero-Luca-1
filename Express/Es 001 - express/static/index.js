@@ -14,7 +14,7 @@ $(document).ready(function () {
     });
 
     $("#btnInvia2").on("click", function () {
-        let request = inviaRichiesta("post", "/api/risorsa1", { "nome": "pluto" });
+        let request = inviaRichiesta("post", "/api/risorsa2", { "nome": "pluto", "vampires": 3 });
         request.fail(errore);
         request.done(function (data) {
             if (data.modifiedCount > 0) {
@@ -23,6 +23,14 @@ $(document).ready(function () {
             else {
                 alert("nessuna corrispondenza trovata")
             }
+        });
+    });
+
+    $("#btnInvia3").on("click", function () {
+        let request = inviaRichiesta("post", "/api/risorsa3/m/brown");
+        request.fail(errore);
+        request.done(function (data) {
+            console.log(data)
         });
     });
 });
