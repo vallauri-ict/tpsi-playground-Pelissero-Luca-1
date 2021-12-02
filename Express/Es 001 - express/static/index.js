@@ -4,7 +4,12 @@ $(document).ready(function () {
         let request = inviaRichiesta("get", "/api/risorsa1", { "nome": "pippo" });
         request.fail(errore);
         request.done(function (data) {
-            alert(JSON.stringify(data));
+            if (data.lenght) {
+                alert(JSON.stringify(data));
+            }
+            else{
+                alert("Corrispondenza non trovata")
+            }
         });
     });
 
@@ -12,7 +17,12 @@ $(document).ready(function () {
         let request = inviaRichiesta("post", "/api/risorsa1", { "nome": "pluto" });
         request.fail(errore);
         request.done(function (data) {
-            alert(JSON.stringify(data));
+            if (data.modifiedCount > 0) {
+                alert("Aggiornamento eseguito correttamente")
+            }
+            else {
+                alert("nessuna corrispondenza trovata")
+            }
         });
     });
 });
