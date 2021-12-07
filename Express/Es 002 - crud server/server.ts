@@ -7,7 +7,7 @@ import HEADERS from "./headers.json";
 // mongo
 import * as _mongodb from "mongodb";
 const mongoClient = _mongodb.MongoClient;
-const CONNECTIONSTRING = "mongodb+srv://admin:admin@cluster0.eawws.mongodb.net/test";
+const CONNECTIONSTRING = "mongodb+srv://admin:admin@cluster0.eawws.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
 const DB_NAME = "5B";
 
 let port: number = 1337;
