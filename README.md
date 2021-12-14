@@ -1,4 +1,4 @@
-# tpsi-playground-Pelissero-Luca
+# TPSI Playground
 
 _Stud. Pelissero Luca_
 
