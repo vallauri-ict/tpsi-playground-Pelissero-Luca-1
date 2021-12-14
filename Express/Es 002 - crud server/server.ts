@@ -75,26 +75,18 @@ app.use("/", (req, res, next) => {
         }
     })
 })
-app.get("/api/risorsa1", (req, res, next) => {
-    let unicorn = req.query.nome;
-    if (unicorn) {
-        let db = req["client"].db(DB_NAME) as _mongodb.Db;
-        let collection = db.collection("unicorns");
-        let request = collection.find({ name: unicorn }).toArray();
-        request.then(function (data) {
-            res.send(data);
-        })
-        request.catch(function (err) {
-            res.status(503).send("errore nella sintassi della query")
-        })
-        request.finally(function () {
-            req["client"].close();
-        })
-    }
-    else {
-        res.status(400).send("Parametro mancante: UnicornName");
+app.get("/api/getCollections", (req, res, next) => {
+    let db = req["client"].db(DB_NAME) as _mongodb.Db;
+    let request = db.listCollections().toArray();
+    request.then(function (data) {
+        res.send(data);
+    })
+    request.catch(function (err) {
+        res.status(503).send("errore nella sintassi della query")
+    })
+    request.finally(function () {
         req["client"].close();
-    }
+    })
 })
 
 // 6.listener
