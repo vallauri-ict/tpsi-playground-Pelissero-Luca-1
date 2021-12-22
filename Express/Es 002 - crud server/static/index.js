@@ -1,6 +1,6 @@
 "use strict"
 
-$(document).ready(function() {
+$(document).ready(function () {
     let divIntestazione = $("#divIntestazione")
     let divCollections = $("#divCollections")
     let table = $("#mainTable")
@@ -12,7 +12,7 @@ $(document).ready(function() {
 
     let request = inviaRichiesta("get", "/api/getCollections");
     request.fail(errore)
-    request.done(function(collections) {
+    request.done(function (collections) {
         console.log(collections);
         let label = divCollections.children("label");
         for (const collection of collections) {
@@ -25,77 +25,105 @@ $(document).ready(function() {
         label.remove();
     })
 
-    divCollections.on("click","input[type=radio]",function(){
+    divCollections.on("click", "input[type=radio]", function () {
         currentCollection = $(this).val();
-        let request = inviaRichiesta("get","/api/" + currentCollection);
+        let request = inviaRichiesta("get", "/api/" + currentCollection);
         request.fail(errore);
-        request.done(function aggiornaTabella(data){
+        request.done(function (data) {
             console.log(data);
             divIntestazione.find("strong").eq(0).text(currentCollection);
             divIntestazione.find("strong").eq(1).text(data.length);
-            if(currentCollection == "unicorns")
-            {
+            if (currentCollection == "unicorns") {
                 filters.show();
             }
-            else
-            {
+            else {
                 filters.hide();
             }
             table.children("tbody").empty();
             for (const item of data) {
                 let tr = $("<tr>").appendTo(table.children("tbody"));
 
-                let td = $("<td>").appendTo(tr).text(item["_id"]).prop("id",item._id).on("click",dettagli);
-                td = $("<td>").appendTo(tr).text(item.name).prop("id",item._id).on("click",dettagli);
+                let td = $("<td>").appendTo(tr).text(item["_id"]).prop({ "_id": item._id, "method": "get" }).on("click", dettagli);
+                td = $("<td>").appendTo(tr).text(item.name).prop({ "_id": item._id, "method": "get" }).on("click", dettagli);
                 td = $("<td>").appendTo(tr);
-                // creo 3 div, il resto è gestito dal css (3 icone)
-                for (let i = 0; i < 3; i++) {
-                    $("<div>").appendTo(td);
-                }
+
+                $("<div>").appendTo(td).prop({ "_id": item._id, "method": "patch" }).on("click", dettagli);
+                $("<div>").appendTo(td).prop({ "_id": item._id, "method": "put" }).on("click", dettagli);
+                $("<div>").appendTo(td).prop("_id", item._id).on("click", elimina);
             }
         })
     });
 
-    function dettagli()
-    {
-        let id = $(this).prop("id");
-        let request = inviaRichiesta("get","/api/" + currentCollection + "/" + id);
+    function elimina() {
+        let request = inviaRichiesta("delete", "/api/" + currentCollection + "/" + $(this).prop("id"))
         request.fail(errore);
-        request.done(function(data){
-            console.log(data);
-            let content = "";
-            for (let key in data) {
-                content += "<strong>" + key + ":</strong> " + data[key] + "<br>";
-            }
-            divDettagli.html(content);
+        request.done(function () {
+            alert("Documento rimosso correttamente");
+            aggiorna();
         })
     }
 
-    $("#btnAdd").on("click",function(){
-        divDettagli.empty();
-        let textarea = $("<textarea>").val("{ }").appendTo(divDettagli);
+    function dettagli() {
+        let id = $(this).prop("_id");
+        let method = $(this).prop("method").toUpperCase();
 
+        let request = inviaRichiesta("GET", "/api/" + currentCollection + "/" + id);
+        request.fail(errore);
+        request.done(function (data) {
+            console.log(data);
+            if (method == "GET") {
+                let content = "";
+                for (let key in data) {
+                    content += "<strong>" + key + ":</strong> " + data[key] + "<br>";
+                    divDettagli.html(content);
+                }
+            }
+            else {
+                divDettagli.empty();
+                let textarea = $("<textarea>");
+                delete (data._id);
+                textarea.text(JSON.stringify(data, null, 2))
+                textarea.appendTo(divDettagli)
+                textarea.css("height", textarea.get(0).scrollHeight + "px")
+
+                visualizzaBtnInvia(method, id);
+            }
+        })
+    }
+
+    function visualizzaBtnInvia(method, id = "") {
         let btnInvia = $("<button>").text("INVIA").appendTo(divDettagli);
-        btnInvia.on("click",function(){
+        btnInvia.on("click", function () {
             let param = "";
-            try 
-            {
-                param = JSON.parse(textarea.val());
-            } 
-            catch (error)
-            {
+            try {
+                param = JSON.parse(divDettagli.children("textarea").val());
+            }
+            catch (error) {
                 alert("Errore: JSON non valido");
                 return;
             }
 
-            let request = inviaRichiesta("post","/api/" + currentCollection, param);
+            let request = inviaRichiesta(method, "/api/" + currentCollection + "/" + id, param);
             request.fail(errore);
-            request.done(function(data){
-                alert("Inserimento eseguito correttamente");
+            request.done(function () {
+                alert("Operazione eseguita correttamente");
                 divDettagli.empty();
-                divCollections.trigger("click","input[type=radio]");
+                aggiorna();
             });
         });
+    }
+
+    $("#btnAdd").on("click", function () {
+        divDettagli.empty();
+        $("<textarea>").val("{ }").appendTo(divDettagli);
+
+        visualizzaBtnInvia("POST");
     });
+
+    function aggiorna() {
+        var event = jQuery.Event('click');
+        event.target = divCollections.find('input[type=radio]:checked')[0];
+        divCollections.trigger(event);
+    }
 
 });

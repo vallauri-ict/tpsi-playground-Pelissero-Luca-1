@@ -62,31 +62,31 @@ app.use("/", (req, res, next) => {
 //              elenco delle routes di risposta al client
 // *********************************************************************
 // middleware di apertura della connessione
-app.use("/",function(req,res,next){
-   mongoClient.connect(CONNECTIONSTRING,function(err,client){
-       if(err){
-           res.status(503).send("Errore nella connessione al DB");
-       }
-       else{
-           console.log("Connected succesfully");
-           req["client"] = client;
-           next();
-       }
+app.use("/", function (req, res, next) {
+   mongoClient.connect(CONNECTIONSTRING, function (err, client) {
+      if (err) {
+         res.status(503).send("Errore nella connessione al DB");
+      }
+      else {
+         console.log("Connected succesfully");
+         req["client"] = client;
+         next();
+      }
    });
 });
 
 // lettura delle collezioni presenti nel DB
-app.use("/api/getCollections",function(req,res,next){
+app.use("/api/getCollections", function (req, res, next) {
    let db = req["client"].db(DB_NAME) as _mongodb.Db;
    let request = db.listCollections().toArray();
-   request.then(function(data){
-       res.send(data);
+   request.then(function (data) {
+      res.send(data);
    });
-   request.catch(function(err){
-       res.status(503).send("Errore esecuzione query");
+   request.catch(function (err) {
+      res.status(503).send("Errore esecuzione query");
    })
-   request.finally(function(){
-       req["client"].close();
+   request.finally(function () {
+      req["client"].close();
    })
 });
 
@@ -94,7 +94,7 @@ app.use("/api/getCollections",function(req,res,next){
 let currentCollection = "";
 let id = "";
 // id? campo facoltativo
-app.use("/api/:collection/:id?",function(req,res,next){
+app.use("/api/:collection/:id?", function (req, res, next) {
    currentCollection = req.params.collection;
    id = req.params.id;
    next();
@@ -102,51 +102,100 @@ app.use("/api/:collection/:id?",function(req,res,next){
 
 
 // listener specifici:
-app.get("/api/*",function(req,res,next){
+app.get("/api/*", function (req, res, next) {
    let db = req["client"].db(DB_NAME) as _mongodb.Db;
    let collection = db.collection(currentCollection);
-   if(!id)
-   {
-       let request = collection.find().project({"_id":1,"name":1}).toArray();
-       request.then(function(data){
-           res.send(data);
-       });
-       request.catch(function(err){
-           res.status(503).send("Errore esecuzione query");
-       })
-       request.finally(function(){
-           req["client"].close();
-       })
+   if (!id) {
+      let request = collection.find().project({ "_id": 1, "name": 1 }).toArray();
+      request.then(function (data) {
+         res.send(data);
+      });
+      request.catch(function (err) {
+         res.status(503).send("Errore esecuzione query");
+      })
+      request.finally(function () {
+         req["client"].close();
+      })
    }
-   else
-   {
-       let oId = new _mongodb.ObjectId(id);
-       let request = collection.findOne({"_id":oId});
-       request.then(function(data){
-           res.send(data);
-       });
-       request.catch(function(err){
-           res.status(503).send("Errore esecuzione query");
-       })
-       request.finally(function(){
-           req["client"].close();
-       })
+   else {
+      let oId = new _mongodb.ObjectId(id);
+      let request = collection.findOne({ "_id": oId });
+      request.then(function (data) {
+         res.send(data);
+      });
+      request.catch(function (err) {
+         res.status(503).send("Errore esecuzione query");
+      })
+      request.finally(function () {
+         req["client"].close();
+      })
    }
 });
 
-app.post("/api/*",function(req,res,next){
+app.post("/api/*", function (req, res, next) {
    let db = req["client"].db(DB_NAME) as _mongodb.Db;
    let collection = db.collection(currentCollection);
 
    let request = collection.insertOne(req["body"]);
-   request.then(function(data){
-       res.send(data);
+   request.then(function (data) {
+      res.send(data);
    });
-   request.catch(function(err){
-       res.status(503).send("Errore esecuzione query");
+   request.catch(function (err) {
+      res.status(503).send("Errore esecuzione query");
    })
-   request.finally(function(){
-       req["client"].close();
+   request.finally(function () {
+      req["client"].close();
+   })
+});
+
+app.post("/api/*", function (req, res, next) {
+   let db = req["client"].db(DB_NAME) as _mongodb.Db;
+   let collection = db.collection(currentCollection);
+   let _id = new _mongodb.ObjectId(id);
+
+   let request = collection.deleteOne({ "_id": _id });
+   request.then(function (data) {
+      res.send(data);
+   });
+   request.catch(function (err) {
+      res.status(503).send("Errore esecuzione query");
+   })
+   request.finally(function () {
+      req["client"].close();
+   })
+});
+
+app.patch("/api/*", function (req, res, next) {
+   let db = req["client"].db(DB_NAME) as _mongodb.Db;
+   let collection = db.collection(currentCollection);
+   let _id = new _mongodb.ObjectId(id);
+
+   let request = collection.updateOne({ "_id": _id }, { "$set": req["BODY"] });
+   request.then(function (data) {
+      res.send(data);
+   });
+   request.catch(function (err) {
+      res.status(503).send("Errore esecuzione query");
+   })
+   request.finally(function () {
+      req["client"].close();
+   })
+});
+
+app.put("/api/*", function (req, res, next) {
+   let db = req["client"].db(DB_NAME) as _mongodb.Db;
+   let collection = db.collection(currentCollection);
+   let _id = new _mongodb.ObjectId(id);
+
+   let request = collection.replaceOne({ "_id": _id }, req["BODY"]);
+   request.then(function (data) {
+      res.send(data);
+   });
+   request.catch(function (err) {
+      res.status(503).send("Errore esecuzione query");
+   })
+   request.finally(function () {
+      req["client"].close();
    })
 });
 
