@@ -29,30 +29,31 @@ $(document).ready(function () {
         currentCollection = $(this).val();
         let request = inviaRichiesta("get", "/api/" + currentCollection);
         request.fail(errore);
-        request.done(function (data) {
-            console.log(data);
-            divIntestazione.find("strong").eq(0).text(currentCollection);
-            divIntestazione.find("strong").eq(1).text(data.length);
-            if (currentCollection == "unicorns") {
-                filters.show();
-            }
-            else {
-                filters.hide();
-            }
-            table.children("tbody").empty();
-            for (const item of data) {
-                let tr = $("<tr>").appendTo(table.children("tbody"));
-
-                let td = $("<td>").appendTo(tr).text(item["_id"]).prop({ "_id": item._id, "method": "get" }).on("click", dettagli);
-                td = $("<td>").appendTo(tr).text(item.name).prop({ "_id": item._id, "method": "get" }).on("click", dettagli);
-                td = $("<td>").appendTo(tr);
-
-                $("<div>").appendTo(td).prop({ "_id": item._id, "method": "patch" }).on("click", dettagli);
-                $("<div>").appendTo(td).prop({ "_id": item._id, "method": "put" }).on("click", dettagli);
-                $("<div>").appendTo(td).prop("_id", item._id).on("click", elimina);
-            }
-        })
+        request.done(disegnaTabella(data))
     });
+
+    function disegnaTabella(data) {
+        divIntestazione.find("strong").eq(0).text(currentCollection);
+        divIntestazione.find("strong").eq(1).text(data.length);
+        if (currentCollection == "unicorns") {
+            filters.show();
+        }
+        else {
+            filters.hide();
+        }
+        table.children("tbody").empty();
+        for (const item of data) {
+            let tr = $("<tr>").appendTo(table.children("tbody"));
+
+            let td = $("<td>").appendTo(tr).text(item["_id"]).prop({ "_id": item._id, "method": "get" }).on("click", dettagli);
+            td = $("<td>").appendTo(tr).text(item.name).prop({ "_id": item._id, "method": "get" }).on("click", dettagli);
+            td = $("<td>").appendTo(tr);
+
+            $("<div>").appendTo(td).prop({ "_id": item._id, "method": "patch" }).on("click", dettagli);
+            $("<div>").appendTo(td).prop({ "_id": item._id, "method": "put" }).on("click", dettagli);
+            $("<div>").appendTo(td).prop("_id", item._id).on("click", elimina);
+        }
+    }
 
     function elimina() {
         let request = inviaRichiesta("delete", "/api/" + currentCollection + "/" + $(this).prop("id"))
@@ -125,5 +126,25 @@ $(document).ready(function () {
         event.target = divCollections.find('input[type=radio]:checked')[0];
         divCollections.trigger(event);
     }
+
+    $("#btnFind").on("click", function () {
+        let filterJson = {}
+        let hair = $("#lstHair").children("option:selected").val()
+        if (hair)
+            filterJson["hair"] = hair.toLowerCase();
+
+        let male = filters.find("input[type=checkbox]").first()
+            .is(":checked")
+        let female = filters.find("input[type=checkbox]").last()
+            .is(":checked")
+        if (male && !female)
+            filterJson["gender"] = 'm';
+        else if (female && !male)
+            filterJson["gender"] = 'f';
+
+        let request = inviaRichiesta("get", "/api/" + currentCollection, filterJson)
+        request.fail(errore)
+        request.done(disegnaTabella())
+    })
 
 });

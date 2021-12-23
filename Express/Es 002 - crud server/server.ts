@@ -106,7 +106,7 @@ app.get("/api/*", function (req, res, next) {
    let db = req["client"].db(DB_NAME) as _mongodb.Db;
    let collection = db.collection(currentCollection);
    if (!id) {
-      let request = collection.find().project({ "_id": 1, "name": 1 }).toArray();
+      let request = collection.find(req["query"]).toArray();
       request.then(function (data) {
          res.send(data);
       });
