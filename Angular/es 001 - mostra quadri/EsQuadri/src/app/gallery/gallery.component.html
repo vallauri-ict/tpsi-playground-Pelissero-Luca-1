@@ -1,0 +1,31 @@
+<div class="wrapper">
+
+    <h1 align="center">Galleria d'Arte</h1>
+
+    <div class="head">
+        <label *ngFor="let artista of artisti"> <input type='radio' value="{{artista.id}}" name="artista"
+                (click)="loadPaintings(artista)"> {{artista.name}} </label>
+    </div>
+
+    <div class="content">
+        <div *ngIf="pictures">
+            <button (click)="decrease()" [disabled]="indexPicture==0"> Indietro </button>
+        </div>
+        <div class="info">
+            <div *ngIf="pictures">
+                <p>ID= {{pictures[indexPicture].id}}</p>
+                <p>Titolo= {{pictures[indexPicture].id}}</p>
+                <p>Genere= {{artist.gender}}</p>
+                <span>Like= {{pictures[indexPicture].nLike}}</span>
+                <img (click)="addLike()" height="20px" src="assets/img/like.jpg">
+            </div>
+        </div>
+        <div class="img" *ngIf="pictures">
+            <img [src]="controllaBase64()">
+        </div>
+
+        <div *ngIf="pictures">
+            <button (click)="increase()" [disabled]="indexPicture==pictures.length-1"> Avanti </button>
+        </div>
+    </div>
+</div>
