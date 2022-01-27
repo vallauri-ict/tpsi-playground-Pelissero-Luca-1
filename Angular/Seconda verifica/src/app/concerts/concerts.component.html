@@ -1,0 +1,28 @@
+<table class="table table-md table-hover">
+    <thead>
+        <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Cantante</th>
+            <th scope="col">Data</th>
+            <th scope="col">Genere</th>
+            <th scope="col">Città</th>
+            <th scope="col">Struttura</th>
+            <th scope="col">nPosti</th>
+            <th scope="col">Dettagli</th>
+            <th scope="col">Prenota</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let item of concerti">
+            <td>{{item.id}}</td>
+            <td>{{item.cantante}}</td>
+            <td>{{item.data}}</td>
+            <td>{{item.genere}}</td>
+            <td>{{item.citta}}</td>
+            <td>{{item.sede.struttura}}</td>
+            <td>{{item.sede.nPosti}}</td>
+            <td><button (click)="dettagli(item.dettagli)" type="button" class="btn btn-info btn-xs">dettagli</button></td>
+            <td><button (click)="prenota(item.id)" type="button" class="btn btn-success btn-xs">prenota</button></td>
+        </tr>
+    </tbody>
+</table>
