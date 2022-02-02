@@ -9,7 +9,7 @@ import { UploadedFile } from "express-fileupload";
 
 
 const mongoClient = mongodb.MongoClient;
-const CONNECTION_STRING = process.env.MONGODB_URI || "mongodb+srv://edoardo:aba@cluster0.7z0jw.mongodb.net/5B?retryWrites=true&w=majority";
+const CONNECTION_STRING = process.env.MONGODB_URI || "mongodb+srv://admin:admin@cluster0.eawws.mongodb.net/5B?retryWrites=true&w=majority";
 /*const CONNECTION_STRING =
   "mongodb://admin:admin@cluster0-shard-00-00.zarz7.mongodb.net:27017,cluster0-shard-00-01.zarz7.mongodb.net:27017,cluster0-shard-00-02.zarz7.mongodb.net:27017/test?replicaSet=atlas-bgntwo-shard-0&ssl=true&authSource=admin";*/
 const DB_NAME = "5B";
