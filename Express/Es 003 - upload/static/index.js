@@ -8,6 +8,7 @@ $(document).ready(function() {
 	let request = inviaRichiesta("GET", "/api/images")
 	request.fail(errore)
 	request.done(function(data){
+		console.log(data)
 		let tbody = $("#mainTable").children("tbody")
 		tbody.empty();
 		for (let item of data){
