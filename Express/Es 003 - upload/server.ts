@@ -6,6 +6,14 @@ import * as mongodb from "mongodb";
 const fileupload = require('express-fileupload');
 import cors from "cors";
 import { UploadedFile } from "express-fileupload";
+import Enviroment from "./enviroment.json";
+import cloudinary, { UploadApiResponse } from "cloudinary";
+
+cloudinary.v2.config({
+  cloud_name: Enviroment.CLOUD_NAME,
+  api_key: Enviroment.API_KEY,
+  api_secret: Enviroment.API_SECRET,
+});
 
 
 const mongoClient = mongodb.MongoClient;
@@ -45,8 +53,8 @@ app.use("/", cors(corsOptions));
 
 app.use(fileupload({
   "limits ": { "fileSize ": (10 * 1024 * 1024) } // 10 MB
- }));
- 
+}));
+
 
 
 let paginaErrore = "";
@@ -90,6 +98,15 @@ app.use("/", function (req, res, next) {
   next();
 })
 
+//****************************************************************
+//file upload
+//****************************************************************
+app.use(fileupload({
+  "limits ": { "fileSize ": (10 * 1024 * 1024) } // 10 MB
+}));
+
+app.use("/", express.json({"limit": "10mb"}))
+
 
 //****************************************************************
 //elenco delle routes di risposta al client
@@ -125,11 +142,9 @@ app.get("/api/images", (req, res, next) => {
   });
 })
 
-///api/uploadBase64
-
 app.post("/api/uploadBinary", (req, res, next) => {
 
-  if (!req.files  || Object.keys(req.files).length == 0)
+  if (!req.files || Object.keys(req.files).length == 0)
     res.status(400).send('No files were uploaded');
   else {
     let _file = req.files.img as UploadedFile;
@@ -139,7 +154,7 @@ app.post("/api/uploadBinary", (req, res, next) => {
       else {
         let db = req["client"].db(DB_NAME) as mongodb.Db;
         let collection = db.collection('images');
-        let user ={"username":req.body.username,"img":_file.name}
+        let user = { "username": req.body.username, "img": _file.name }
         let request = collection.insertOne(user)
         request.then((data) => {
           res.send(data);
@@ -154,6 +169,32 @@ app.post("/api/uploadBinary", (req, res, next) => {
     })
   }
 
+  ///api/uploadBase64
+
+  // listener cloudinary
+  app.post("/api/cloudinary", function (req, res, next) {
+    cloudinary.v2.uploader.upload(req.body.image)
+      .catch((error) => {
+        res.status(500).send("error uploading file to cloudinary")
+      })
+      .then((result: UploadApiResponse) => {
+        // res.send({ "url": result.secure_url })
+        let db = req["client"].db(DB_NAME) as mongodb.Db;
+        let collection = db.collection('images');
+        let user = { "username": req.body.username, "img": result.secure_url }
+        let request = collection.insertOne(user)
+        request.then((data) => {
+          res.send(data);
+        });
+        request.catch((err) => {
+          res.status(503).send("Sintax error in the query");
+        });
+        request.finally(() => {
+          req["client"].close();
+        });
+      })
+  })
+
 
 
   // const getPageTwo = async ( page)=>{    
@@ -165,14 +206,6 @@ app.post("/api/uploadBinary", (req, res, next) => {
   //     console.log(comuni)
   // }
 })
-
-
-//****************************************************************
-//file upload
-//****************************************************************
-app.use(fileupload({
-  "limits ": { "fileSize ": (10 * 1024 * 1024) } // 10 MB
-}));
 
 
 //****************************************************************
