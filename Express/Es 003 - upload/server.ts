@@ -10,14 +10,13 @@ import Enviroment from "./enviroment.json";
 import cloudinary, { UploadApiResponse } from "cloudinary";
 
 cloudinary.v2.config({
-  cloud_name: Enviroment.CLOUD_NAME,
-  api_key: Enviroment.API_KEY,
-  api_secret: Enviroment.API_SECRET,
+  cloud_name: Enviroment.CLOUDINARY.CLOUD_NAME,
+  api_key: Enviroment.CLOUDINARY.API_KEY,
+  api_secret: Enviroment.CLOUDINARY.API_SECRET,
 });
 
 
 const mongoClient = mongodb.MongoClient;
-const CONNECTION_STRING = process.env.MONGODB_URI || "mongodb+srv://admin:admin@cluster0.eawws.mongodb.net/5B?retryWrites=true&w=majority";
 /*const CONNECTION_STRING =
   "mongodb://admin:admin@cluster0-shard-00-00.zarz7.mongodb.net:27017,cluster0-shard-00-01.zarz7.mongodb.net:27017,cluster0-shard-00-02.zarz7.mongodb.net:27017/test?replicaSet=atlas-bgntwo-shard-0&ssl=true&authSource=admin";*/
 const DB_NAME = "5B";
@@ -73,6 +72,7 @@ function init() {
 //****************************************************************
 //elenco delle routes di tipo middleware
 //****************************************************************
+
 // 1.log 
 app.use("/", function (req, res, next) {
   console.log("---->" + req.method + ":" + req.originalUrl);
@@ -83,9 +83,10 @@ app.use("/", function (req, res, next) {
 //il next lo fa automaticamente quando non trova la risorsa
 app.use("/", express.static("./static"));
 
-// 3.route lettura parametri post
-app.use("/", body_parser.json());
-app.use("/", body_parser.urlencoded({ "extended": true }));
+// 3.route lettura parametri post con impostazione del limite
+// per le immagini base 64
+app.use("/", body_parser.json({"limit":"10mb"}));
+app.use("/", body_parser.urlencoded({ "extended": true, "limit":"10mb" }));
 
 // 4.log parametri
 app.use("/", function (req, res, next) {
@@ -105,15 +106,13 @@ app.use(fileupload({
   "limits ": { "fileSize ": (10 * 1024 * 1024) } // 10 MB
 }));
 
-app.use("/", express.json({"limit": "10mb"}))
-
 
 //****************************************************************
 //elenco delle routes di risposta al client
 //****************************************************************
 // middleware di apertura della connessione
 app.use("/", (req, res, next) => {
-  mongoClient.connect(CONNECTION_STRING, (err, client) => {
+  mongoClient.connect(Enviroment.CONNECTION_STRING || process.env.MONGODB_URI, (err, client) => {
     if (err) {
       res.status(503).send("Db connection error");
     } else {
@@ -211,6 +210,11 @@ app.post("/api/uploadBinary", (req, res, next) => {
 //****************************************************************
 //default route(risorse non trovate) e route di gestione degli errori
 //****************************************************************
+app.use("/", function (err, req, res, next) {
+  res.status(404)
+  res.send("Risorsa non trovata")
+})
+
 app.use("/", function (err, req, res, next) {
   console.log("***************  ERRORE CODICE SERVER ", err.message, "  *****************");
 })
