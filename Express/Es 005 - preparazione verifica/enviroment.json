@@ -1,0 +1,9 @@
+{
+    "CLOUDINARY": {
+        "CLOUD_NAME": "luca-pelissero",
+        "API_KEY": "489675482634618",
+        "API_SECRET": "B3cuU8dou1tPlk3zSqnqzGrv-x8",
+        "CLOUDINARY_URL": "CLOUDINARY_URL=cloudinary://489675482634618:B3cuU8dou1tPlk3zSqnqzGrv-x8@luca-pelissero"
+    },
+    "CONNECTION_STRING": "mongodb+srv://admin:admin@cluster0.eawws.mongodb.net/5B?retryWrites=true&w=majority"
+}
