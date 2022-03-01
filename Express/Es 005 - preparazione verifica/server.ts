@@ -13,12 +13,14 @@ const httpServer = http.createServer(app);
 
 import { Server, Socket } from 'socket.io'; // import solo l‟oggetto Server
 import { json } from 'body-parser';
+import { userInfo } from 'os';
 const io = new Server(httpServer);
 
 const mongoClient = mongodb.MongoClient;
 const DB_NAME = "5B";
 
 const PORT = 1337
+
 /************** HTTP ********* */
 //**********************
 //elenco delle routes di tipo middleware
@@ -102,6 +104,10 @@ app.get("/api/images", (req, res, next) => {
 	});
 })
 
+app.post("/api/uploadImage", (req, res, next) => {
+
+})
+
 /*********** gestione web socket ********* */
 let users = [];
 
@@ -112,6 +118,7 @@ let users = [];
   'user' contenente tutte le informazioni relative al singolo utente  */
 
 io.on('connection', function (clientSocket) {
+	//user corrente
 	let user = {} as { username: string, socket: Socket, room: string };
 
 	// 1) ricezione username
@@ -139,39 +146,60 @@ io.on('connection', function (clientSocket) {
 
 	// 2) ricezione di un messaggio	 
 	clientSocket.on('message', function (msg) {
-		log('User ' + colors.yellow(user.username) +
-			" (sockID=" + user.socket.id + ') sent ' + colors.green(msg))
-
-		let img = "";
-		mongoClient.connect(process.env.MONGODB_URI || ENVIRONMENT.CONNECTION_STRING, function (err, client) {
-			if (!err) {
-				console.log(">>>>>> Connected made");
-				let db = client.db(DB_NAME);
-				let collection = db.collection("images");
-				let request = collection.findOne({ "username": user.username });
-				request.then(function (data) {
-					img = data.img
-				});
-				request.catch(function (err) {
-					log("Username non trovato")
-				})
-				request.finally(function () {
-					client.close()
-				})
+		if (msg.startsWith("data:image")) 
+		{
+			let response = {
+				'from': user.username,
+				"message" : "",
+				"img": msg,
+				"icon" : "",
+				'date': new Date()
 			}
-		});
-
-		// notifico a tutti i socket (mittente compreso) il messaggio ricevuto 
-		let response = {
-			'from': user.username,
-			'message': msg,
-			'date': new Date(),
-			'img': img
+			io.to(user.room).emit('message_notify', JSON.stringify(response));	
 		}
-		//con questa sintassi spedisco a tutti compreso il mittente
-		////io.sockets.emit('message_notify', JSON.stringify(response));
-		//con questa sintassi spedisco solo alla stanza richiesta
-		io.to(user.room).emit('message_notify', JSON.stringify(response));
+		else {
+			log('User ' + colors.yellow(user.username) +
+				" (sockID=" + user.socket.id + ') sent ' + colors.green(msg))
+			// notifico a tutti i socket (mittente compreso) il messaggio ricevuto 
+
+			mongoClient.connect(process.env.MONGODB_URI || ENVIRONMENT.CONNECTION_STRING, (err, client) => {
+				if (!err) {
+					let db = client.db(DB_NAME) as mongodb.Db;
+					let collection = db.collection("images");
+					let request = collection.findOne({ "username": user.username });
+					request.then((data) => {
+						if (data != null) {
+							let icon = data.img;
+
+							let response = {
+								'from': user.username,
+								'message': msg,
+								"img" : "",
+								"icon": icon,
+								'date': new Date()
+							}
+							io.to(user.room).emit('message_notify', JSON.stringify(response));
+						}
+						else {
+							let response = {
+								'from': user.username,
+								'message': msg,
+								"img" : "",
+								"icon": "",
+								'date': new Date()
+							}
+							io.to(user.room).emit('message_notify', JSON.stringify(response));
+						}
+					});
+					request.catch((err) => {
+						//vuoto
+					});
+					request.finally(() => {
+						client.close();
+					});
+				}
+			});
+		}
 	});
 
 	// 3) disconnessione dell'utente
