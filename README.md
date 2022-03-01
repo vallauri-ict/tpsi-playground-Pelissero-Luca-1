@@ -9,6 +9,7 @@ _Stud. Pelissero Luca_
 - [mongo db](https://github.com/vallauri-ict/tpsi-playground-Pelissero-Luca-1/tree/master/Mongo%20DB)
 - [Express](https://github.com/vallauri-ict/tpsi-playground-Pelissero-Luca-1/tree/master/Express)
 - [Angular](https://github.com/vallauri-ict/tpsi-playground-Pelissero-Luca-1/tree/master/Angular)
+- [Cordova](https://github.com/vallauri-ict/tpsi-playground-Pelissero-Luca-1/tree/master/Cordova)
 - [Teoria](https://github.com/vallauri-ict/tpsi-playground-Pelissero-Luca-1/tree/master/Teoria)
 
 ### Argomenti:
@@ -19,3 +20,5 @@ _Stud. Pelissero Luca_
 <img src="https://d2eip9sf3oo6c2.cloudfront.net/tags/images/000/000/359/square_480/expressjslogo.png" height="32px"/> Express
 
 <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Angular_full_color_logo.svg/800px-Angular_full_color_logo.svg.png" height="35px"/> Angular
+
+<img src="https://www.geekandjob.com/uploads/wiki/5fd2279663a119d26b5924521938d9eb.png" height="35px"/> Cordova
