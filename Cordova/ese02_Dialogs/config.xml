@@ -8,4 +8,10 @@
     <content src="index.html" />
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
+    <splash src="www/img/splash.png"/>
+    <preference name="SplashShowOnlyFirstTime" value="true"/>
+    <preference name="SplashScreenDelay" value="3000"/>
+    <preference name="AutoHideSplashScreen" value="true"/>
+    <preference name="FadeSplashScreen" value="true"/>
+    <preference name="FadeSplashScreenDuration" value="750"/>
 </widget>
