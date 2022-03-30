@@ -364,3 +364,6 @@ FodyWeavers.xsd
 
 # enviroment cloudinary
 enviroment.json
+environment.json
+
+connectionString.txt

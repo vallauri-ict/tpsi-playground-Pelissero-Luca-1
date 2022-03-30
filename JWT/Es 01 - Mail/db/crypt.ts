@@ -3,7 +3,7 @@
 import {MongoClient, ObjectId}  from "mongodb";
 import bcrypt from "bcryptjs"
 
-const DBNAME = "mail"
+const DBNAME = "5B"
 const CONNECTIONSTRING =  "mongodb://127.0.0.1:27017";
 
 
@@ -13,7 +13,7 @@ MongoClient.connect(CONNECTIONSTRING,  function(err, client) {
         console.log("Errore di connessione al database");
     else {
         const DB = client.db(DBNAME);
-        const COLLECTION = DB.collection('mail');
+        const COLLECTION = DB.collection('mail_jwt');
 
         COLLECTION.find().project({"password":1}).toArray(function(err, vet) {
 			if(err){

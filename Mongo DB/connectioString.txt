@@ -1,8 +1,0 @@
-CONNECTION STRING MONGO
-mongodb+srv://admin:admin@cluster0.eawws.mongodb.net/test
-
-CONNECTION STRING NODE
-mongodb+srv://admin:admin@cluster0.eawws.mongodb.net/myFirstDatabase?retryWrites=true&w=majority
-
-CONNECTION STRING LOCALE
-mongodb://127.0.0.1:27017

@@ -17,7 +17,7 @@ import environment from "./environment.json"
 // ***************************** Costanti *************************************
 const app = express();
 const CONNECTION_STRING = environment.CONNECTION_STRING_LOCAL
-const DBNAME = "mail"
+const DBNAME = "5B"
 const DURATA_TOKEN = 120 // sec
 const HTTP_PORT = 1337
 const HTTPS_PORT = 1338
@@ -25,9 +25,9 @@ const privateKey = fs.readFileSync("keys/privateKey.pem", "utf8");
 const certificate = fs.readFileSync("keys/certificate.crt", "utf8");
 const credentials = { "key": privateKey, "cert": certificate };
 cloudinary.v2.config({
-	cloud_name: environment.cloudinary.CLOUD_NAME,
-	api_key: environment.cloudinary.API_KEY,
-	api_secret: environment.cloudinary.API_SECRET,
+	cloud_name: environment.CLOUDINARY.CLOUD_NAME,
+	api_key: environment.CLOUDINARY.API_KEY,
+	api_secret: environment.CLOUDINARY.API_SECRET,
 })
 
 
@@ -99,10 +99,38 @@ app.use("/", fileUpload({
 /* ***************** (Sezione 2) middleware relativi a JWT ****************** */
 
 
-
+// root di login 
+app.post("/api/login", function (req, res, next) {
+    MongoClient.connect(CONNECTION_STRING, function (err, client) {
+        if (err) {
+            res.status(501).send("Errore connessione al database")["log"](err)
+        }
+        else{
+            const db = client.db(DBNAME)
+            const collection = db.collection("mail_jwt")
+            let username = req.body.username
+            collection.findOne({"username": username}, function (err, dbUser) {
+                if (err) {
+                    res.status(500).send("Errore esecuzione query")["log"](err)
+                }
+                else{
+                    if (!dbUser) {
+                        res.status(401).send("username o password errati")["log"](err)
+                    }
+                    else{
+                        if (req.body.password == dbUser) {
+                            
+                        }
+                    }
+                }
+            })
+        }
+    })
+})
 
 
 /* ********************** (Sezione 3) USER ROUTES  ************************** */
+
 
 
 
